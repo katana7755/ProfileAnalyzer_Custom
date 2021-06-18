@@ -150,6 +150,10 @@ namespace UnityEditor.Performance.ProfileAnalyzer
                     countMax = marker.countMax;
                 if (marker.countMean > countMaxMean)
                     countMaxMean = marker.countMean;
+
+                // [UTK] Added ++++++++++
+                marker.msTotalMean = ProfileAnalyzer.CURRENT_TOTAL > 0 ? (float)(marker.msTotal / ProfileAnalyzer.CURRENT_TOTAL) : 0f;
+                // ++++++++++
             }
 
             m_FrameSummary.markerCountMax = countMax;

@@ -11,6 +11,8 @@ namespace UnityEditor.Performance.ProfileAnalyzer
 {
     internal class ProfileAnalyzer
     {
+        public static int CURRENT_TOTAL = 0;
+
         public const int kDepthAll = -1;
 
         int m_Progress = 0;
@@ -140,18 +142,34 @@ namespace UnityEditor.Performance.ProfileAnalyzer
             m_Progress = 0;
             if (profileData == null)
             {
+                // [UTK] Added ++++++++++
+                CURRENT_TOTAL = 0;
+                // ++++++++++
+
                 return null;
             }
             if (profileData.GetFrameCount()<=0)
             {
+                // [UTK] Added ++++++++++
+                CURRENT_TOTAL = 0;
+                // ++++++++++
+
                 return null;
             }
 
             int frameCount = selectionIndices.Count;
             if (frameCount < 0)
             {
+                // [UTK] Added ++++++++++
+                CURRENT_TOTAL = 0;
+                // ++++++++++
+                
                 return null;
             }
+
+            // [UTK] Added ++++++++++
+            CURRENT_TOTAL = frameCount;
+            // ++++++++++
 
             bool processMarkers = (threadFilters != null);
 

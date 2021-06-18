@@ -43,6 +43,10 @@ namespace UnityEditor.Performance.ProfileAnalyzer
         public int[] countBuckets;      // Each bucket contains 'number of frames' for 'count in the frame' in that range
         public List<FrameTime> frames;
 
+        // [UTK] Added ++++++++++
+        public float msTotalMean;
+        // ++++++++++
+
         public MarkerData(string markerName)
         {
             buckets = new int[bucketCount];
@@ -85,6 +89,10 @@ namespace UnityEditor.Performance.ProfileAnalyzer
                 buckets[b] = 0;
                 countBuckets[b] = 0;
             }
+
+            // [UTK] Added ++++++++++
+            msTotalMean = 0f;
+            // ++++++++++
         }
 
         /// <summary>Compare the time duration between the marker median times. Used for sorting in descending order</summary>

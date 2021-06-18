@@ -53,6 +53,11 @@ namespace UnityEditor.Performance.ProfileAnalyzer
             Total,
             TotalBar,
             Threads,
+
+            // [UTK] Added ++++++++++
+            FrameCount,
+            TotalMean,
+            // ++++++++++
         }
 
         static int m_MaxColumns;
@@ -72,6 +77,11 @@ namespace UnityEditor.Performance.ProfileAnalyzer
             AtMedian,
             Total,
             Threads,
+
+            // [UTK] Added ++++++++++
+            FrameCount,
+            TotalMean,
+            // ++++++++++
         }
 
         // Sort options per column
@@ -94,6 +104,11 @@ namespace UnityEditor.Performance.ProfileAnalyzer
             SortOption.Total,
             SortOption.Total,
             SortOption.Threads,
+
+            // [UTK] Added ++++++++++
+            SortOption.FrameCount,
+            SortOption.TotalMean,
+            // ++++++++++
         };
 
         internal static class Styles
@@ -323,6 +338,15 @@ namespace UnityEditor.Performance.ProfileAnalyzer
                     case SortOption.Threads:
                         orderedQuery = orderedQuery.ThenBy(l => l.cachedRowString!=null ? l.cachedRowString[(int)MyColumns.Threads].text : GetThreadNames(l), ascending);
                         break;
+
+                        // [UTK] Added ++++++++++
+                    case SortOption.FrameCount:
+                        orderedQuery = orderedQuery.ThenBy(l => l.data.presentOnFrameCount, ascending);
+                        break;
+                    case SortOption.TotalMean:
+                        orderedQuery = orderedQuery.ThenBy(l => l.data.msTotalMean, ascending);
+                        break;
+                        // ++++++++++
                 }
             }
 
@@ -361,6 +385,14 @@ namespace UnityEditor.Performance.ProfileAnalyzer
                     return myTypes.Order(l => l.data.msTotal, ascending);
                 case SortOption.Threads:
                     return myTypes.Order(l => l.cachedRowString != null ? l.cachedRowString[(int)MyColumns.Threads].text : GetThreadNames(l), ascending);
+
+                    // [UTK] Added ++++++++++
+                case SortOption.FrameCount:
+                    return myTypes.Order(l => l.data.presentOnFrameCount, ascending);
+                case SortOption.TotalMean:
+                    return myTypes.Order(l => l.data.msTotalMean, ascending);
+                    // ++++++++++
+
                 default:
                     Assert.IsTrue(false, "Unhandled enum");
                     break;
@@ -501,6 +533,11 @@ namespace UnityEditor.Performance.ProfileAnalyzer
 
             string threadNames = GetThreadNames(item);
             item.cachedRowString[(int)MyColumns.Threads] = new GUIContent(threadNames, threadNames);
+
+            // [UTK] Added ++++++++++
+            item.cachedRowString[(int)MyColumns.FrameCount] = new GUIContent(string.Format("{0}", item.data.presentOnFrameCount), "");
+            item.cachedRowString[(int)MyColumns.TotalMean] = ToDisplayUnitsWithTooltips(item.data.msTotalMean, false);
+            // ++++++++++
         }
 
         void ShowBar(Rect rect, float ms, float range, GUIContent content)
@@ -545,8 +582,14 @@ namespace UnityEditor.Performance.ProfileAnalyzer
                 case MyColumns.AtMedian:
                 case MyColumns.Total:
                 case MyColumns.Threads:
+
+                // [UTK] Added ++++++++++
+                case MyColumns.FrameCount:
+                case MyColumns.TotalMean:
                     ShowText(cellRect, content);
                     break;
+                // ++++++++++
+
                 case MyColumns.MedianBar:
                     ShowBar(cellRect, item.data.msMedian, m_MaxMedian, content);
                     break;
@@ -626,6 +669,11 @@ namespace UnityEditor.Performance.ProfileAnalyzer
                 new HeaderData("Total", "Marker total time over all selected frames"),
                 new HeaderData("Total Bar", "Marker total time over all selected frames"),
                 new HeaderData("Threads", "Threads the marker occurs on (with filtering applied)"),
+
+                // [UTK] Added ++++++++++
+                new HeaderData("Frame Count", "Frame count..."),
+                new HeaderData("Total Mean", "Total mean..."),
+                // ++++++++++
             };
             foreach (var header in headerData)
             {
