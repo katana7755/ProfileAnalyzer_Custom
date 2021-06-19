@@ -140,6 +140,10 @@ namespace UnityEditor.Performance.ProfileAnalyzer
         static AxisMode s_YAxisMode;
         static float m_YAxisMs;
 
+        // [UTK] Added ++++++++++
+        static int s_SkipFrameCount = 0;
+        // ++++++++++
+
         bool m_IsOrderedByFrameDuration;
 
         List<Data> m_Values = new List<Data> { };
@@ -880,6 +884,24 @@ namespace UnityEditor.Performance.ProfileAnalyzer
             }
             // Sort selection in frame index order so start is lowest and end is highest
             selected.Sort();
+
+            // [UTK] Added ++++++++++
+            if (s_SkipFrameCount > 0)
+            {
+                var newSelected = new List<int>(selected.Count);
+                int frameInterval = s_SkipFrameCount + 1;
+
+                for (int i = 0; i < selected.Count; ++i)
+                {         
+                    if (i % frameInterval == 0)
+                    {      
+                        newSelected.Add(selected[i]);
+                    }
+                }
+
+                selected = newSelected;
+            }
+            // ++++++++++
 
             m_SetRange(selected, clickCount, singleControlAction, inputStatus);
 
@@ -1666,6 +1688,16 @@ namespace UnityEditor.Performance.ProfileAnalyzer
             string yMinText = ToDisplayUnits(0,true);
             GUI.Label(new Rect(rect.x, y - h, kXAxisWidth, h), yMinText, rightAlignStyle);
 
+            // [UTK] Added ++++++++++
+            GUI.Label(new Rect(rect.x - kXAxisWidth * 2f, y - h * 1.3f, kXAxisWidth * 1.5f, h), "Skip Frame:");
+            
+            int newSkipFrameCount = EditorGUI.IntSlider(new Rect(rect.x - kXAxisWidth * 2f, y, kXAxisWidth * 1.5f, h), "", s_SkipFrameCount, 0, totalSelectedCount);
+
+            if (newSkipFrameCount != s_SkipFrameCount)
+            {
+                s_SkipFrameCount = newSkipFrameCount;
+            }
+            // ++++++++++
 
             // x axis
             rect.x += xStart;
